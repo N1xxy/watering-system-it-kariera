@@ -4,11 +4,15 @@
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
 const int moisturePin = A0;
-const int maxSensor = 1023; // dry
-const int minSensor = 200;   // wet
+const int maxSensor     = 1023; // dry
+const int minSensor     = 200;  // wet
+
+const int pumpPin       = 9;    // transistor base drive (change if needed)
 
 void setup() {
-  lcd.begin(16, 2); // 16x2 display
+  lcd.begin(16, 2);        // 16x2 display
+  pinMode(pumpPin, OUTPUT);
+  digitalWrite(pumpPin, LOW); // ensure pump is off at start
 }
 
 void loop() {
@@ -37,6 +41,13 @@ void loop() {
   lcd.setCursor(0, 1);
   lcd.print("Status: ");
   lcd.print(status);
+
+  // Pump control: turn on when Dry, off otherwise
+  if (moisturePercent <= 40) {
+    digitalWrite(pumpPin, HIGH); // pump ON
+  } else {
+    digitalWrite(pumpPin, LOW);  // pump OFF
+  }
 
   delay(200);
 }
